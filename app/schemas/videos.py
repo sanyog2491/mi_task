@@ -13,8 +13,8 @@ class VideoSearch(BaseModel):
 class VideoResponse(BaseModel):
     id: int
     name: str
-    size: int
     path: str
+    size: int
     converted: str
 
     class Config:

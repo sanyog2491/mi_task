@@ -4,7 +4,11 @@ from app.models.models import Video
 from app.schemas.videos import VideoCreate
 
 async def add_video(session: AsyncSession, video_create: VideoCreate) -> Video:
-    video = Video(name=video_create.name, size=video_create.size, path=video_create.path)
+    video = Video(
+        name=video_create.name,
+        size=video_create.size,
+        path=video_create.path,
+    )
     session.add(video)
     await session.commit()
     await session.refresh(video)
