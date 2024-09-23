@@ -5,7 +5,7 @@ services:
     container_name: fastapi_video_app
     restart: always
     ports:
-      - "8000:8000"  
+      - "8090:8000"  
     depends_on:
       - db
       - redis
@@ -27,13 +27,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432" 
+      - "5431:5432" 
   redis:
     image: redis:alpine
     container_name: redis_video_cache
     restart: always
     ports:
-      - "6379:6379"  
+      - "6380:6379"  
 
 volumes:
   postgres_data:
