@@ -1,0 +1,39 @@
+version: '3'
+services:
+  web:
+    build: .
+    container_name: fastapi_video_app
+    restart: always
+    ports:
+      - "8000:8000"  
+    depends_on:
+      - db
+      - redis
+    environment:
+      POSTGRES_DB: video_db
+      POSTGRES_USER: video_user
+      POSTGRES_PASSWORD: video_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  db:
+    image: postgres:13
+    container_name: postgres_video_db
+    restart: always
+    environment:
+      POSTGRES_USER: video_user
+      POSTGRES_PASSWORD: video_password
+      POSTGRES_DB: video_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432" 
+  redis:
+    image: redis:alpine
+    container_name: redis_video_cache
+    restart: always
+    ports:
+      - "6379:6379"  
+
+volumes:
+  postgres_data:

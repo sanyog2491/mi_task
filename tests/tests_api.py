@@ -6,7 +6,7 @@ from unittest.mock import patch, mock_open
 client = TestClient(app)
 
 def test_upload_video():
-    files = {'file': ('test_video.mkv', b'test file content', 'video/mp4')}
+    files = {'file': ('test_video2.mp4', b'test file content', 'video/mp4')}
     response = client.post("/api/upload/", files=files)
     
     assert response.status_code == 200, f"Unexpected status code {response.status_code}. Response: {response.json()}"
@@ -31,17 +31,14 @@ def test_block_video():
     assert response.status_code == 200
     assert response.json() == {"message": "Video blocked from downloading."}
 
-@pytest.mark.asyncio
-async def test_download_blocked_video():
-    await client.post("/api/block/", json={"video_id": 3})
-
-    response = await client.get("/api/download/3")
-    
+def test_download_blocked_video():
+    # Make sure to block the video with id=1 before testing
+    client.post("/api/block/", json={"video_id": 2})
+    response = client.get("/api/download/2")
     assert response.status_code == 403
     assert response.json() == {"detail": "Video is blocked for download."}
 
-
 def test_download_non_blocked_video():
-    response = client.get("/api/download/3")
+    response = client.get("/api/download/4")
     assert response.status_code == 200
     assert response.json() == {"message": "Video download started."}
