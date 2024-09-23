@@ -116,12 +116,6 @@ video_management/
    - Description: Removes a video ID from the blocklist.
    - Request Body: JSON with `video_id` field.
 
-# Unit Tests
-
-To run the unit tests:
-
-pytest
-
 
 # Deployment on EC2
 

@@ -42,3 +42,12 @@ async def download_video(video_id: int):
         raise HTTPException(status_code=403, detail="Video is blocked for download.")
     # Proceed with download logic
     return {"message": "Video download started."}
+
+@router.post("/unblock/")
+async def unblock_video(request: BlockVideoRequest):
+    key = f"blocked_{request.video_id}"
+    if await redis_cache.get(key):
+        await redis_cache.delete(key)
+        return {"message": "Video unblocked successfully."}
+    else:
+        raise HTTPException(status_code=404, detail="Video ID not found in blocklist.")
