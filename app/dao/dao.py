@@ -8,6 +8,15 @@ class VideoDAO:
         self.session = session
 
     async def add_video(self, video_create: VideoCreate) -> Video:
+        """
+        Adds a new video to the database.
+
+        Args:
+            video_create (VideoCreate): A schema object containing video details (name, size, and path).
+
+        Returns:
+            Video: The newly added video record from the database.
+        """
         video = Video(
             name=video_create.name,
             size=video_create.size,
@@ -19,6 +28,16 @@ class VideoDAO:
         return video
 
     async def search_videos(self, name: str = None, size: int = None):
+        """
+        Searches videos in the database based on name and/or size.
+
+        Args:
+            name (str, optional): Filter by video name (partial matches allowed).
+            size (int, optional): Filter by video size (exact match).
+
+        Returns:
+            List[Video]: A list of videos that match the search criteria.
+        """
         query = select(Video)
         if name:
             query = query.filter(Video.name.ilike(f"%{name}%"))

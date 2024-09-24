@@ -1,5 +1,5 @@
 import os
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 from app.dao.dao import add_video, search_videos
 from app.schemas.videos import VideoCreate, VideoResponse, VideoSearch
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +11,18 @@ import subprocess
 
 
 async def upload_video(file: UploadFile) -> VideoResponse:
+    """
+    Upload a video, save it to the file system, convert it to MP4 format, and store its metadata in the database.
+
+    Args:
+        file (UploadFile): The video file being uploaded.
+
+    Returns:
+        VideoResponse: Metadata of the uploaded and converted video.
+
+    Raises:
+        HTTPException: If any error occurs during upload or processing.
+    """
     try:
         if not os.path.exists('videos'):
             os.makedirs('videos')
@@ -42,11 +54,32 @@ async def upload_video(file: UploadFile) -> VideoResponse:
 
     
 async def get_videos(search_params: VideoSearch):
+    """
+    Search for videos in the database based on provided filters (name, size).
+
+    Args:
+        search_params (VideoSearch): The search filters for video metadata (name and size).
+
+    Returns:
+        List[VideoResponse]: A list of videos matching the search criteria.
+    """
     async with async_session() as session:
         videos = await search_videos(session, search_params.name, search_params.size)
         return videos
 
 async def convert_to_mp4(file_path: str) -> str:
+    """
+    Simulates the conversion of a video to MP4 format.
+
+    Args:
+        file_path (str): The original path of the video file.
+
+    Returns:
+        str: The new path of the converted MP4 file.
+
+    Raises:
+        Exception: If an error occurs during conversion.
+    """
     new_path = file_path.rsplit('.', 1)[0] + ".mp4"
     command = ['ffmpeg', '-i', file_path, new_path]
     
