@@ -42,7 +42,6 @@ async def upload_video(file: UploadFile) -> VideoResponse:
         async with redis_cache as cache:
             await cache.set(f"video:{video.id}:blocked", "false")
 
-        # Assuming `converted` is a field you want to include, you need to set it correctly
         converted_status = "true" if new_path.endswith(".mp4") else "false"
 
         return VideoResponse(id=video.id, name=video.name, path=video.path, size=video.size, converted=converted_status)
