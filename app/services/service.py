@@ -1,6 +1,6 @@
 import os
 from fastapi import HTTPException, UploadFile
-from app.dao.dao import add_video, search_videos
+from app.dao.dao import VideoDAO
 from app.schemas.videos import VideoCreate, VideoResponse, VideoSearch
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import async_session
@@ -37,7 +37,8 @@ async def upload_video(file: UploadFile) -> VideoResponse:
         video_create = VideoCreate(name=file.filename, size=file.size, path=new_path)
         
         async with async_session() as session:
-            video = await add_video(session, video_create)
+            video_dao = VideoDAO(session)
+            video = await video_dao.add_video(session, video_create)
         
         async with redis_cache as cache:
             await cache.set(f"video:{video.id}:blocked", "false")
@@ -63,7 +64,8 @@ async def get_videos(search_params: VideoSearch):
         List[VideoResponse]: A list of videos matching the search criteria.
     """
     async with async_session() as session:
-        videos = await search_videos(session, search_params.name, search_params.size)
+        video_dao = VideoDAO(session)
+        videos = await video_dao.search_videos(session, search_params.name, search_params.size)
         return videos
 
 async def convert_to_mp4(file_path: str) -> str:
